@@ -1,0 +1,9 @@
+{
+  "name": "gemini-browser-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A local browser chat UI backed by the Gemini API.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

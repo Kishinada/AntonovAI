@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Antonov AI</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <main class="chat-panel">
+        <header class="chat-panel__header">
+          <div class="brand-block">
+            <p class="eyebrow">Antonov AI</p>
+            <h1>Antonov AI</h1>
+            <p class="lead">Выберите модель и общайтесь в браузере.</p>
+          </div>
+
+          <div class="panel-actions">
+            <label class="toolbar-field" for="modelSelect">
+              <span>Модель</span>
+              <select id="modelSelect"></select>
+            </label>
+            <span id="statusPill" class="status-pill">Проверка конфигурации...</span>
+            <button id="clearButton" class="ghost-button" type="button">Очистить</button>
+          </div>
+        </header>
+
+        <section id="messages" class="messages" aria-live="polite"></section>
+
+        <form id="chatForm" class="composer">
+          <label class="composer__label" for="promptInput">Сообщение</label>
+          <textarea
+            id="promptInput"
+            rows="1"
+            maxlength="12000"
+            placeholder="Напишите сообщение. Enter отправляет, Shift+Enter переносит строку."
+          ></textarea>
+
+          <div class="composer__footer">
+            <p id="helperText" class="helper-text">История хранится только в локальном браузере.</p>
+            <button id="sendButton" class="primary-button" type="submit">Отправить</button>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <noscript>Для работы этого чата нужен JavaScript.</noscript>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
