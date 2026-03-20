@@ -9,11 +9,14 @@
   <body>
     <div class="page-shell">
       <main class="chat-panel">
+        <div class="panel-ribbon"></div>
         <header class="chat-panel__header">
           <div class="brand-block">
-            <p class="eyebrow">Antonov AI</p>
+            <div class="brand-mark">
+              <span class="brand-mark__pulse"></span>
+              <p class="eyebrow">Antonov AI</p>
+            </div>
             <h1>Antonov AI</h1>
-            <p class="lead">Выберите модель и общайтесь в браузере.</p>
           </div>
 
           <div class="panel-actions">
@@ -26,7 +29,9 @@
           </div>
         </header>
 
-        <section id="messages" class="messages" aria-live="polite"></section>
+        <section class="messages-stage">
+          <section id="messages" class="messages" aria-live="polite"></section>
+        </section>
 
         <form id="chatForm" class="composer">
           <label class="composer__label" for="promptInput">Сообщение</label>

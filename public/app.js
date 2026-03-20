@@ -25,6 +25,24 @@ const state = {
   selectedModel: loadSelectedModel(),
 };
 let rateLimitTimerId = null;
+const quickPrompts = [
+  {
+    title: "Написать код",
+    prompt: "Напиши аккуратный пример кода и кратко объясни, как он работает.",
+  },
+  {
+    title: "Разобрать ошибку",
+    prompt: "Разбери мою ошибку по шагам и предложи точечный фикс.",
+  },
+  {
+    title: "Составить план",
+    prompt: "Составь понятный пошаговый план решения задачи.",
+  },
+  {
+    title: "Придумать идею",
+    prompt: "Придумай сильную идею проекта и оцени риски запуска.",
+  },
+];
 
 boot();
 
@@ -34,6 +52,7 @@ async function boot() {
 
   elements.chatForm.addEventListener("submit", onSubmit);
   elements.clearButton.addEventListener("click", clearConversation);
+  elements.messages.addEventListener("click", onMessagesClick);
   elements.modelSelect.addEventListener("change", onModelChange);
   elements.promptInput.addEventListener("keydown", onPromptKeyDown);
   elements.promptInput.addEventListener("input", autoResizeTextarea);
@@ -67,6 +86,17 @@ function onModelChange(event) {
   persistSelectedModel();
   syncComposerState();
   render();
+  elements.promptInput.focus();
+}
+
+function onMessagesClick(event) {
+  const trigger = event.target.closest("[data-suggestion]");
+  if (!trigger) {
+    return;
+  }
+
+  elements.promptInput.value = trigger.dataset.suggestion || "";
+  autoResizeTextarea();
   elements.promptInput.focus();
 }
 
@@ -199,18 +229,12 @@ function render() {
   syncComposerState();
 
   if (!state.messages.length) {
-    elements.messages.innerHTML = `
-      <div class="empty-state">
-        <h3>Чат готов к работе</h3>
-        <p>
-          Выберите модель сверху и отправьте сообщение внизу.
-        </p>
-      </div>
-    `;
+    elements.messages.innerHTML = renderStarterBoard();
     return;
   }
 
-  elements.messages.innerHTML = state.messages
+  const starterBoard = state.messages.length < 4 ? renderStarterBoard("compact") : "";
+  const renderedMessages = state.messages
     .map((message) => {
       const classes = [
         "message",
@@ -234,7 +258,45 @@ function render() {
     })
     .join("");
 
-  elements.messages.scrollTop = elements.messages.scrollHeight;
+  elements.messages.innerHTML = `${starterBoard}${renderedMessages}`;
+
+  if (state.messages.length < 4) {
+    elements.messages.scrollTop = 0;
+  } else {
+    elements.messages.scrollTop = elements.messages.scrollHeight;
+  }
+}
+
+function renderStarterBoard(mode = "full") {
+  const modelLabel = escapeHtml(state.selectedModel || state.model);
+  const suggestions = quickPrompts
+    .map(
+      (item) => `
+        <button class="starter-card" type="button" data-suggestion="${escapeHtml(item.prompt)}">
+          <span class="starter-card__title">${escapeHtml(item.title)}</span>
+          <span class="starter-card__body">${escapeHtml(item.prompt)}</span>
+        </button>
+      `,
+    )
+    .join("");
+
+  const compactClass = mode === "compact" ? " starter-board--compact" : "";
+
+  return `
+    <section class="starter-board${compactClass}">
+      <div class="starter-board__hero">
+        <p class="starter-board__eyebrow">Antonov AI</p>
+        <h2>Быстрый старт</h2>
+        <p class="starter-board__copy">Выберите сценарий или напишите свой запрос внизу.</p>
+        <div class="starter-board__chips">
+          <span>${modelLabel}</span>
+          <span>Local proxy</span>
+          <span>Code highlight</span>
+        </div>
+      </div>
+      <div class="starter-board__actions">${suggestions}</div>
+    </section>
+  `;
 }
 
 function renderModelOptions() {
